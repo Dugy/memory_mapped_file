@@ -20,8 +20,8 @@
 #include "memory_mapped_file_base.hpp"
 
 class MemoryMappedFileUncompressed : public MemoryMappedFileBase {
-	mutable unsigned int appendedFrom_;
-	virtual const std::string &fileNameExtension() const
+	mutable int appendedFrom_;
+	virtual const std::string &fileNameExtension() const override
 	{
 		const static std::string extension(".dat");
 		return extension;
@@ -40,14 +40,14 @@ public:
 	/*!
 	* \brief Destructor, flushes changes
 	*/
-	virtual ~MemoryMappedFileUncompressed();
+	virtual ~MemoryMappedFileUncompressed() override;
 
 	/*!
 	* \brief Gets size of the data
 	*
 	* \return Size of the data
 	*/
-	virtual int size() const;
+	virtual int size() const override;
 
 	/*!
 	* \brief Loads the file up to the given byte

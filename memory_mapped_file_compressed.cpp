@@ -24,12 +24,10 @@ constexpr int LOADED_PART_MIN_INCREMENT = (1 << 11);
 namespace FromLzma {
 static void* SzAlloc(void* p, size_t size)
 {
-	p = p;
 	return MyAlloc(size);
 }
 static void SzFree(void* p, void* address)
 {
-	p = p;
 	MyFree(address);
 }
 static ISzAlloc g_Alloc = { (void* (__cdecl*)(ISzAllocPtr, std::size_t))SzAlloc, (void (__cdecl*)(ISzAllocPtr, void* ))SzFree };
@@ -58,8 +56,8 @@ static SRes readFromMemory(void* p, void* buf, size_t* size)
 		((std::uint8_t*)buf)[i - data->position] = data->vector[i];
 		sizeRead++;
 	}
-	*size = sizeRead;
-	data->position += sizeRead;
+	*size = size_t(sizeRead);
+	data->position += size_t(sizeRead);
 
 	return SZ_OK;
 }
@@ -133,7 +131,7 @@ void MemoryMappedFileCompressed::load(int until) const
 		Byte outBuf[FromLzma::OUTPUT_BUFFER_SIZE];
 		size_t inPos = 0, inSize = 0, outPos = 0;
 		LzmaDec_Init(lzmaState.get());
-		int left = fileSize_ - data_.size();
+		int left = fileSize_ - int(data_.size());
 		while (true) {
 			if (inPos == inSize) {
 				inSize = fread(inBuf, 1, FromLzma::INPUT_BUFFER_SIZE, input);
@@ -172,11 +170,11 @@ void MemoryMappedFileCompressed::load(int until) const
 				break;
 			}
 
-			if (data_.size() >= stopAt) break;
+			if (int(data_.size()) >= stopAt) break;
 		}
 	}
 
-	if (!archiveHasSize) fileSize_ = data_.size();
+	if (!archiveHasSize) fileSize_ = int(data_.size());
 
 	fclose(input);
 
@@ -221,11 +219,10 @@ void MemoryMappedFileCompressed::flush(const std::string &fileName) const
 	if (!output) {
 		std::cerr << "Cannot save the file" << std::endl; // Better shouldn't throw here
 		throw(std::runtime_error("Cannot save file " + extendedFileName(fileName)));
-		return;
 	}
 
 	CLzmaEncHandle enc = LzmaEnc_Create(&g_Alloc);
-	if (enc == 0) {
+	if (enc == nullptr) {
 		std::cerr << "Cannot create encoder to save the file" << std::endl; // Better shouldn't throw here
 		return;
 	}
@@ -303,7 +300,7 @@ MemoryMappedFileCompressed::~MemoryMappedFileCompressed()
 int MemoryMappedFileCompressed::size() const
 {
 	if (fullyLoaded()) {
-		if (modified_) return data_.size();
+		if (modified_) return int(data_.size());
 		else return fileSize_;
 	}
 	if (fileSize_ >= 0) return fileSize_;

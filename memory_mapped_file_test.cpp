@@ -29,7 +29,7 @@ inline std::string vec2string(const std::vector<unsigned char> &str)
 {
 	std::string retVal;
 	for (unsigned char c : str)
-		retVal.push_back(c);
+		retVal.push_back(char(c));
 	return retVal;
 }
 
@@ -123,7 +123,7 @@ int main()
 						std::uint8_t bytes[2];
 						std::uint16_t num;
 					} block;
-					block.num = i;
+					block.num = uint16_t(i);
 					testData.push_back(block.bytes[0]);
 					testData.push_back(block.bytes[1]);
 				}

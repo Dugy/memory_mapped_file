@@ -93,7 +93,7 @@ public:
 	{
 		if (!fullyLoaded()) load();
 		modified_ = true;
-		return data_[at];
+		return data_[static_cast<unsigned int>(at)];
 	}
 
 	/*!
@@ -105,7 +105,7 @@ public:
 	inline const std::uint8_t &operator[](int at) const
 	{
 		if (at >= loadedUntil_) load(at);
-		return data_[at];
+		return data_[static_cast<unsigned int>(at)];
 	}
 
 	/*!
