@@ -45,6 +45,11 @@ public:
 	MemoryMappedFile(MemoryMappedFile<T>&& other) = default;
 
 	/*!
+	* \brief Move assignment
+	*/
+	MemoryMappedFile<T>& operator=(MemoryMappedFile<T>&& other) = default;
+
+	/*!
 	* \brief Returns the file name without extension
 	*
 	* \return The name of the file
@@ -183,6 +188,11 @@ public:
 	* \brief Move constructor
 	*/
 	MemoryMappedFile(MemoryMappedFile<T, archiverType>&& other) = default;
+
+	/*!
+	* \brief Move assignment
+	*/
+	MemoryMappedFile<T, archiverType>& operator=(MemoryMappedFile<T, archiverType>&& other) = default;
 };
 
 
