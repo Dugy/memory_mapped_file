@@ -35,9 +35,14 @@ protected:
 	/*!
 	* \brief Constructor, use a derived class' constructor to specify the way the data is stored
 	*/
-	MemoryMappedFile(MemoryMappedFileBase* archiver) : archiver_(archiver) {}
+	MemoryMappedFile(std::unique_ptr<MemoryMappedFileBase> archiver) : archiver_(std::move(archiver)) {}
 
 public:
+
+	/*!
+	* \brief Move constructor
+	*/
+	MemoryMappedFile(MemoryMappedFile<T>&& other) = default;
 
 	/*!
 	* \brief Returns the file name without extension
@@ -155,6 +160,12 @@ public:
 		archiver_->clear();
 		archiver_->append(reinterpret_cast<const std::uint8_t*>(data), size * sizeof(T));
 	}
+
+	/*!
+	* \brief Destructor
+	*/
+
+	virtual ~MemoryMappedFile() = default;
 };
 
 template<typename T, typename archiverType>
@@ -166,7 +177,12 @@ public:
 	*
 	* \param The name of the file
 	*/
-	MemoryMappedFile(const std::string &fileName) : MemoryMappedFile<T>(new archiverType(fileName)) {} // TODO: Try to use std::make_unique
+	MemoryMappedFile(const std::string &fileName) : MemoryMappedFile<T>(std::make_unique<archiverType>(fileName)) {}
+
+	/*!
+	* \brief Move constructor
+	*/
+	MemoryMappedFile(MemoryMappedFile<T, archiverType>&& other) = default;
 };
 
 
