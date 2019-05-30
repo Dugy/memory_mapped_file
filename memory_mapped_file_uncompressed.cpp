@@ -43,11 +43,11 @@ MemoryMappedFileUncompressed::~MemoryMappedFileUncompressed()
 int MemoryMappedFileUncompressed::size() const
 {
 	if (modified_) return int(data_.size());
-
+	
 	if (fileSize_ >= 0) {
 		return std::max<int>(int(data_.size()), fileSize_);
 	}
-
+	
 	std::ifstream file(extendedFileName(fileName_), std::ifstream::ate | std::ifstream::binary);
 	fileSize_ = file.good() ? int(file.tellg()) : 0;
 	return fileSize_;
@@ -56,25 +56,26 @@ int MemoryMappedFileUncompressed::size() const
 void MemoryMappedFileUncompressed::load(int until) const
 {
 	if (until >= 0 && loadedUntil_ > until) return;
-
+	
 	const int stopAt = (until >= 0) ? std::max<int>(std::min<int>(int(until * LOADED_PART_INCREMENT), until + LOADED_PART_MAX_INCREMENT),
-													until + LOADED_PART_MIN_INCREMENT) : INT_MAX;
-
+			until + LOADED_PART_MIN_INCREMENT) : INT_MAX;
+					   
 	std::ifstream file(extendedFileName(fileName_), std::fstream::binary);
 	file.seekg(loadedUntil_);
-
+	
+	auto formerLoadedUntil = loadedUntil_;
 	while (file.good() && loadedUntil_ < stopAt) {
 		const_cast<std::vector<std::uint8_t>&>(data_).push_back(uint8_t(file.get()));
 		loadedUntil_++;
 	}
-	if (!data_.empty()) {
-		const_cast<std::vector<std::uint8_t>&>(data_).pop_back();  // Why is this line needed?
+	if (loadedUntil_ != formerLoadedUntil) {
+		const_cast<std::vector<std::uint8_t>&>(data_).pop_back();  // The previous cycle reads an extra symbol, we need to remove it
 		loadedUntil_--;
 	}
 	if (!file.good()) {
 		fileSize_ = loadedUntil_;
 	}
-
+	
 	if (loadedUntil_ == fileSize_) appendedFrom_ = int(data_.size());
 }
 
@@ -85,7 +86,7 @@ void MemoryMappedFileUncompressed::load(const std::string &fileName, int until)
 		reset();
 		fileName_ = fileName;
 	}
-
+	
 	load(until);
 }
 
@@ -111,17 +112,17 @@ void MemoryMappedFileUncompressed::flush(const std::string &fileName) const
 		for (unsigned int i = static_cast<unsigned int>(appendedFrom_); i < data_.size(); i++)
 			file << data_[i];
 		if (!file.good()) throw(std::runtime_error("Could not write to file " + extendedFileName(fileName)));
-		appendedFrom_ =int( data_.size());
+		appendedFrom_ =int(data_.size());
 	} // else don't need to save
 }
 
-void MemoryMappedFileUncompressed::append(const std::vector<std::uint8_t> &added)
+void MemoryMappedFileUncompressed::append(const std::vector<std::uint8_t>& added)
 {
 	if (!fullyLoaded()) load();
 	data_.insert(data_.end(), added.begin(), added.end());
 }
 
-void MemoryMappedFileUncompressed::append(const std::uint8_t* added, int size)
+void MemoryMappedFileUncompressed::append(const std::uint8_t *added, int size)
 {
 	if (!fullyLoaded()) load();
 	for (int i = 0; i < size; i++)
