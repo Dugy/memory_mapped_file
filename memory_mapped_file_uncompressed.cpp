@@ -98,13 +98,18 @@ void MemoryMappedFileUncompressed::flush() const
 void MemoryMappedFileUncompressed::flush(const std::string &fileName) const
 {
 	// If modified, it must be fully loaded
+	auto updateSizes = [this] {
+		appendedFrom_ = int(data_.size());
+		loadedUntil_ = int(data_.size());
+		fileSize_ = int(data_.size());
+	};
 	if (modified_) {
 		std::ofstream file(extendedFileName(fileName), std::fstream::trunc | std::fstream::binary);
 		if (!file.good()) throw(std::runtime_error("Could not open file " + extendedFileName(fileName)));
 		for (uint8_t byte : data_)
 			file << byte;
 		if (!file.good()) throw(std::runtime_error("Could not write to file " + extendedFileName(fileName)));
-		appendedFrom_ = int(data_.size());
+		updateSizes();
 	}
 	else if (loadedUntil_ == fileSize_ && appendedFrom_ < int(data_.size())) {
 		std::ofstream file(extendedFileName(fileName), std::fstream::app | std::fstream::ate | std::fstream::binary);
@@ -112,7 +117,7 @@ void MemoryMappedFileUncompressed::flush(const std::string &fileName) const
 		for (unsigned int i = static_cast<unsigned int>(appendedFrom_); i < data_.size(); i++)
 			file << data_[i];
 		if (!file.good()) throw(std::runtime_error("Could not write to file " + extendedFileName(fileName)));
-		appendedFrom_ =int(data_.size());
+		updateSizes();
 	} // else don't need to save
 }
 

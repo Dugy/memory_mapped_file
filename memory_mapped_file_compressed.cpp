@@ -262,6 +262,10 @@ void MemoryMappedFileCompressed::flush(const std::string &fileName) const
 
 	if (result != SZ_OK)
 		throw(std::runtime_error("Could not save compressed file"));
+	else {
+		fileSize_ = data_.size();
+		loadedUntil_ = fileSize_;
+	}
 }
 
 //inline std::string vec2string(const std::vector<std::uint8_t> &str)
@@ -299,6 +303,8 @@ MemoryMappedFileCompressed::~MemoryMappedFileCompressed()
 
 int MemoryMappedFileCompressed::size() const
 {
+	if (modified_) return data_.size();
+
 	if (fullyLoaded()) {
 		if (modified_) return int(data_.size());
 		else return fileSize_;
