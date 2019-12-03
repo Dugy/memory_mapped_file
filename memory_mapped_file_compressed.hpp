@@ -20,10 +20,9 @@
 #include "memory_mapped_file_base.hpp"
 
 class MemoryMappedFileCompressed : public MemoryMappedFileBase {
-	virtual const std::string &fileNameExtension() const override
+	virtual std::string fileNameExtension() const override
 	{
-		const static std::string extension(".lzma");
-		return extension;
+		return ".lzma";
 	}
 	void reset();
 public:

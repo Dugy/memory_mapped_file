@@ -28,7 +28,7 @@ protected:
 	mutable int loadedUntil_;
 	mutable int fileSize_;
 
-	virtual const std::string &fileNameExtension() const = 0;
+	virtual std::string fileNameExtension() const = 0;
 public:
 	/*!
 	* \brief Constructor: should load file if exists, or start holding an empty string

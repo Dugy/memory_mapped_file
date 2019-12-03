@@ -21,10 +21,9 @@
 
 class MemoryMappedFileUncompressed : public MemoryMappedFileBase {
 	mutable int appendedFrom_;
-	virtual const std::string &fileNameExtension() const override
+	virtual std::string fileNameExtension() const override
 	{
-		const static std::string extension(".dat");
-		return extension;
+		return ".dat";
 	}
 
 	void reset();
