@@ -77,8 +77,8 @@ public:
 	*/
 	inline bool canReadAt(int at) const
 	{
-		if (at < loadedUntil_ || at < int(data_.size())) return true;
-		if (fullyLoaded()) return false;
+		if (at < loadedUntil_ || at < int(data_.size()))
+			return true;
 		load(at);
 		return (at < loadedUntil_ || at < int(data_.size()));
 	}
@@ -91,7 +91,7 @@ public:
 	*/
 	inline std::uint8_t &operator[](int at)
 	{
-		if (!fullyLoaded()) load();
+		load();
 		modified_ = true;
 		return data_[static_cast<unsigned int>(at)];
 	}

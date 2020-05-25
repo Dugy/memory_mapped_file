@@ -24,14 +24,14 @@ const std::string MemoryMappedFileBase::extendedFileName(const std::string &from
 
 void MemoryMappedFileBase::append(const std::vector<std::uint8_t> &added)
 {
-	if (!fullyLoaded()) load();
+	load();
 	modified_ = true;
 	data_.insert(data_.end(), added.begin(), added.end());
 }
 
 void MemoryMappedFileBase::append(const std::uint8_t* added, int size)
 {
-	if (!fullyLoaded()) load();
+	load();
 	modified_ = true;
 	for (int i = 0; i < size; i++)
 		data_.push_back(added[i]);
@@ -39,7 +39,7 @@ void MemoryMappedFileBase::append(const std::uint8_t* added, int size)
 
 void MemoryMappedFileBase::push_back(uint8_t added)
 {
-	if (!fullyLoaded()) load();
+	load();
 	modified_ = true;
 	data_.push_back(added);
 }
@@ -56,13 +56,13 @@ void MemoryMappedFileBase::clear()
 
 const std::vector<std::uint8_t> &MemoryMappedFileBase::data() const
 {
-	if (!fullyLoaded()) load();
+	load();
 	return data_;
 }
 
 void MemoryMappedFileBase::swapContents(std::vector<std::uint8_t> &other)
 {
-	if (!fullyLoaded()) load();
+	load();
 	modified_ = true;
 	swap(data_, other);
 }

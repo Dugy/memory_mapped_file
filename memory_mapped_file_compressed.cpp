@@ -72,7 +72,7 @@ static size_t writeToMemory(void* pp, const void* buf, size_t size)
 
 void MemoryMappedFileCompressed::load(int until) const
 {
-	if ((until >= 0 && loadedUntil_ > until) || fileSize_ == 0) return;
+	if (fullyLoaded() || (until >= 0 && loadedUntil_ > until)) return;
 
 	std::unique_ptr<CLzmaDec> lzmaState;
 
@@ -303,13 +303,10 @@ MemoryMappedFileCompressed::~MemoryMappedFileCompressed()
 
 int MemoryMappedFileCompressed::size() const
 {
-	if (modified_) return data_.size();
+	if (modified_) return int(data_.size());
 
-	if (fullyLoaded()) {
-		if (modified_) return int(data_.size());
-		else return fileSize_;
-	}
-	if (fileSize_ >= 0) return fileSize_;
+	if (fileSize_ >= 0)
+		return fileSize_;
 
 	load(100);
 	if (fileSize_ >= 0)
