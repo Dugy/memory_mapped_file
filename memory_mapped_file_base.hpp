@@ -77,13 +77,10 @@ public:
 	*/
 	inline bool canReadAt(int at) const
 	{
-		if (at < loadedUntil_ || at < int(data_.size())) return true;
+		if (at < loadedUntil_ || at < int(data_.size()))
+            return true;
         load(at);
         return (at < loadedUntil_ || at < int(data_.size()));
-		//if (at < loadedUntil_ || at < int(data_.size())) return true;
-		//if (fullyLoaded()) return false;
-		//load(at);
-		//return (at < loadedUntil_ || at < int(data_.size()));
 	}
 
 	/*!
