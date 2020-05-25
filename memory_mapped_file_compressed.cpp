@@ -198,7 +198,7 @@ void MemoryMappedFileCompressed::load(const std::string &fileName, int until)
 		fileName_ = fileName;
 	}
 
-    load(until);
+	load(until);
 }
 
 void MemoryMappedFileCompressed::flush() const
@@ -308,10 +308,10 @@ int MemoryMappedFileCompressed::size() const
 	if (fileSize_ >= 0)
 		return fileSize_;
 
-    load(100);
+	load(100);
 	if (fileSize_ >= 0)
 		return fileSize_;
-    load();
+	load();
 	return fileSize_;
 }
 

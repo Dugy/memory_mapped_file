@@ -59,7 +59,7 @@ void MemoryMappedFileUncompressed::load(int until) const
 	
 	const int stopAt = (until >= 0) ? std::max<int>(std::min<int>(int(until * LOADED_PART_INCREMENT), until + LOADED_PART_MAX_INCREMENT),
 			until + LOADED_PART_MIN_INCREMENT) : INT_MAX;
-					   
+
 	std::ifstream file(extendedFileName(fileName_), std::fstream::binary);
 	file.seekg(loadedUntil_);
 	
@@ -86,7 +86,7 @@ void MemoryMappedFileUncompressed::load(const std::string &fileName, int until)
 		reset();
 		fileName_ = fileName;
 	}
-    load(until);
+	load(until);
 }
 
 void MemoryMappedFileUncompressed::flush() const
