@@ -55,7 +55,7 @@ int MemoryMappedFileUncompressed::size() const
 
 void MemoryMappedFileUncompressed::load(int until) const
 {
-	if (until >= 0 && loadedUntil_ > until) return;
+	if (fullyLoaded() || (until >= 0 && loadedUntil_ > until)) return;
 	
 	const int stopAt = (until >= 0) ? std::max<int>(std::min<int>(int(until * LOADED_PART_INCREMENT), until + LOADED_PART_MAX_INCREMENT),
 			until + LOADED_PART_MIN_INCREMENT) : INT_MAX;
@@ -86,8 +86,7 @@ void MemoryMappedFileUncompressed::load(const std::string &fileName, int until)
 		reset();
 		fileName_ = fileName;
 	}
-	
-	load(until);
+    load(until);
 }
 
 void MemoryMappedFileUncompressed::flush() const
@@ -123,20 +122,20 @@ void MemoryMappedFileUncompressed::flush(const std::string &fileName) const
 
 void MemoryMappedFileUncompressed::append(const std::vector<std::uint8_t>& added)
 {
-	if (!fullyLoaded()) load();
+	load();
 	data_.insert(data_.end(), added.begin(), added.end());
 }
 
 void MemoryMappedFileUncompressed::append(const std::uint8_t *added, int size)
 {
-	if (!fullyLoaded()) load();
+	load();
 	for (int i = 0; i < size; i++)
 		data_.push_back(added[i]);
 }
 
 void MemoryMappedFileUncompressed::push_back(std::uint8_t added)
 {
-	if (!fullyLoaded()) load();
+	load();
 	data_.push_back(added);
 }
 
